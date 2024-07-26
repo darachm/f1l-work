@@ -3,7 +3,7 @@ This repo stores Darach Miller's work as part of the
 
 # Status as of 240726
 
-Just starting this up, setting up the structure now
+Week1 memo in progress...
 
 # Structure
 
