@@ -1,6 +1,6 @@
 ---
 author: Darach Miller
-date: 2024-07-31
+date: 2024-08-02
 ---
 
 Dean Lee has asked each of us to address this Key Scientific Question (KSQ):
@@ -9,32 +9,35 @@ Dean Lee has asked each of us to address this Key Scientific Question (KSQ):
     you explore the use of the following FDA-approved antibody therapies in
     additional cancers?
     
-        Trastuzumab: Targets HER2 and is used in the treatment of HER2-positive
-            breast and gastric cancers.
-        Bevacizumab: Targets VEGF and is used for a variety of cancers, 
-            including colorectal, lung, glioblastoma, breast, liver, and 
-            kidney cancer.
-    
-    Take the KSQ and break it down into its constituent components. Test your
-    own understanding of each component. Find additional resources to bolster 
-    your understanding.
+The therapies of interest are trastuzumab and bevacizumab.
 
-[^1]
+# Summary
 
-Below I'm going to break out those components as sections.
+Trastuzumab and bevacizumab are antibodies that bind HER2 and VEGF-A, 
+respectively.
+I'm going to look in cancer cell line scRNAseq datasets to see if particular
+lines are expressing these, expressing them highly, if associated interacting
+partners are expressed, and if downstream signalling pathways are showing
+expression that might signify ongoing activation of the pathways.
 
-- What are these treatments? How do they work? When do we think they'll 
-    be effective?
+# Details
+
+Below I'm going to discuss:
+
+- What are these treatments? 
+    How do they work? 
+    In what situations do we think they'll be effective?
 - What kind of data can we expect from cancer cell lines, and in what ways might
     analysis of scRNAseq data be able to predict the efficacy of these drugs?
 - A proposed analysis strategy to address the question
+- Outstanding questions that may be useful later.
 
-Some parts are summarized from sources, and some parts are direct quotes.
-This document is not an academic contribution, it's a rote summary.
+Some parts are summarized from sources, and some parts are direct quotes copied
+from the indicated sources.
 
-# The two treatments
+## The two treatments
 
-## Trastuzumab and HER2
+### Trastuzumab and HER2
 
 Trastuzumab is a monoclonal antibody that binds HER2 (human epidermal growth
 factor receptor 2) extracellularly [^statsPearlsTrastuzumab].
@@ -55,7 +58,7 @@ shedding, (2) inhibition of PI3K-AKT pathway, (3) attenuation of cell
 signalling, (4) antibody-dependent cellular cytotoxicity, and (5) inhibition of
 tumor angiogenesis"[^iqbal2014]. 
 It is also used to target antibody-drug conjugates,
-such as in the treatment called trastuzumab deruxtecan[^statsPearlsTrastuzumab].
+such as in the therapy called trastuzumab deruxtecan[^statsPearlsTrastuzumab].
 
 Trastuzumab is often used in combination with chemotherapies that inhibit cell
 proliferation or damage DNA. Some use cases:
@@ -80,9 +83,10 @@ In addition,
 "ASCO/CAP guidelines state that intratumoral heterogeneity may contribute to 
 HER2 testing inaccuracy."[^iqbal2014]
 Thus, the efficacy of applying a HER2 -targeting treatment to any cancer will
-likely depend on the fidelity of the measurements of the marker being targeted.
+likely depend on the fidelity of the measurements of the marker being targeted -
+and potentially the heterogeneity of expression.
 
-Finally,
+Finally, to keep in mind the challenge of tumors escaping the therapy,
 resistance to trastuzumab can be mediated by a HER2 mutation lacking the 
 extracellular domain (p95)[^iqbal2014] and 
 increased activity due to point mutations can cause 
@@ -96,7 +100,7 @@ constitutive activation[^brandt-rauf1990].
 [^hussain2007]: https://sci-hub.st/10.1200/JCO.2006.08.0994
 [^brandt-rauf1990]: doi.org/10.1073/pnas.87.21.8660
 
-## Bevacizumab and VEGF-A
+### Bevacizumab and VEGF-A
 
 Bevacizumab is a VEGF-A-targeting humanized monoclonal antibody and the first 
 approved angiogenesis inhibitor[^garcia2020].
@@ -123,24 +127,22 @@ wide range of cancers:
 [^dailyMedBeva]: https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=939b5d1f-9fb2-4499-80ef-0607aa6b114e
 [^statsPearlsBevacizumab]: https://www.ncbi.nlm.nih.gov/books/NBK482126/
 
-## Generalizing these treatments
+### Generalizing these treatments
 
 Both of these treatments bind the extracellular domain of a transmembrane 
 receptor to presumably inhibit its interaction with other receptors.
-To identify other cancers where these treatments may exert their mechanistic
-effects, we should identify cancers that are likely to express the targeted
-marker. 
-Additionally, looking for expression of the other receptors that these targets
-interact with may also be useful, although other unknown pathways and effects
-may be at play.
-An additional proposed mechanism is that these antibodies trigger immunological
-effects, and so the interaction with the known partners may not be relevant.
+An alternative mechanism proposed for each is to modulate the immune-system 
+by binding the antibody to the target, and trastuzumab has been used as an
+ADC.
 
-Third, these antibodies could be used within an antibody drug conjugate (ADC)
-to target chemotherapies, and so simple surface expression of the target is
-a likely prerequisite of it. 
+So, to identify other cancers where these treatments may exert their mechanistic
+effects, we should identify cancers that are likely to express the target
+protein.
+Noting the expression of the other receptors that these targets
+interact with may also be useful, but the expression of the 
+target (HER2 or VEGF-A) is a good place to start.
 
-# Cancer cell lines as a model
+## Cancer cell lines as a model
 
 Cancer cell lines are populations of human cells that can be cultured _ex vivo_
 in labs (ie "in vitro"), where the cells are derived are thought to share 
@@ -149,7 +151,10 @@ cancer [^mirabelli2019]. Usually they are isolated from a patient's tumor.
 Thus, they are a model system that makes a wider range of experiment modalities
 and designs than would be possible _in vivo_.
 
-## Assays to profile these models
+As we'd expect, this means that there are large amounts of data and studies
+reported using these _ex vivo_ cell lines.
+
+### Assays to profile these models
 
 For example,
 Dean Lee provided this link to [the Broad's CCLE](https://sites.broadinstitute.org/ccle/#:~:text=Cancer%20cell%20lines%20are%20the,and%20for%20defining%20drug%20efficacy.).
@@ -157,13 +162,12 @@ This initiative characterized a large number (~1000) of human cancer cell lines
 to determine genetic variants, measure RNA and protein expression, and profile
 sensitivity to pharmacological panels (amongst other assays[^depmap]).
 In addition, other resources include Cell Model Passports[^cellModelPassports],
-the TCGA [^tcgaPortal][^li2017], and the CCLE's DepMap data repository[^depmap].
+the TCGA [^tcgaPortal] [^li2017], and the CCLE's DepMap data repository[^depmap].
 
 Thus, we can use these and other data to identify cancer cell lines that
 express the treatment targets or other possible markers of efficacy. 
-This analysis can then inform later experiments testing how the treatments
-may work in _ex vivo_ cell culture, thus building evidence towards clinical 
-application.
+They would also be useful models for testing our predictions empirically,
+were someone to be so inclined.
 
 [^cellModelPassports]: https://cellmodelpassports.sanger.ac.uk/
 [^tcgaPortal]: https://tcpaportal.org/mclp/#/
@@ -171,83 +175,93 @@ application.
 [^mirabelli2019]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6721418/
 [^depmap]: https://depmap.org/portal/data_page/?tab=allData
 
-## scRNA-seq as an assay
+### What does scRNA-seq data represent?
 
 Single-cell RNAseq is a technology wherein microfluidics and molecular barcoding
 are used to multiplex RNAseq library preparation from many individual cells.
 Then, these RNAseq libraries can sequenced on the appropriate platform, commonly
 Illumina short read. 
+
 The most common vendor/platform for the library preparation is 10x, which
 as far as I can tell is based on a poly-dT primed library reverse transcription
 step for first strand. 
-Second strand synthesis is primed from a template switching oligo strategy.
+Second strand synthesis is primed from a template switching oligo.
 These libraries can then be subject to sequencing-platform-specific strategies
 of fragmentation or whole-template sequencing.
 Commonly I see researchers using 3' data, but there is also a 5' option.
+So we should be able to get mRNA abundance estimates for these cells, although
+I believe it will depend on the specific protocol if we can pull out pre-mRNA
+or different isoforms.
 
 Cancer cell lines should be tractable for assays by this method, as they should
 be straightforward to dissociate (if need be) into suspension to feed onto
 the library preparation chip. It is also possible to use nuclei for DNA genome
-assays or to profile pre-mRNA.
+assays or to profile pre-mRNA (presumably, using non-polyA selection methods),
+so these datasets may also be available.
 
-The obvious advantage of scRNAseq is that it is single-cell.
-Thus this assay may be able to uncover heterogeneity in marker expression
-that may complicate the application of targeted treatments like 
-trastuzumab and bevacizumab.
-Detecting that a subset of cells express these markers may explain why bulk
-assays may have not detected such expression, but treatments that deplete these
-target-expression subpopulations may shift the population structure to disfavor
-expression of the target.
-Let's see.
+### What can scRNA-seq data tell us?
 
-<!--
-Dean Lee provides this link to 
-[an online book about single-cell best practices](https://www.sc-best-practices.org/preamble.html),
-as well as youtube presentations about processing scRNAseq 
-[part1](https://www.youtube.com/watch?v=cmOlCTGX4Ik)
-and
-[part2](https://www.youtube.com/watch?v=FqG_O12oWR4).
--->
+RNAseq will tell us what genes are transcribed in the target cell/tissue.
+This is a good screening technology to indicate potential gene expression
+of the target protein.
+I assume there are also going to be transcriptional programs associated with
+the activation of the HER2 and/or VEGF-A signalling, and thus if I can find
+a clear annotation of this then I can use expression of these to determine if
+the pathway appears to be active (and thus capable of being shutoff!).
 
+The obvious distinction of scRNAseq is that it is single-cell.
+While this is more noisy than bulk, this means we will be able to look for
+heterogeneity of marker expression within populations.
+Heterogeneity may complicate the application of targeted treatments like 
+trastuzumab and bevacizumab by offering a "bet-hedging" phenomena of lineages 
+escaping selection, so this may complicate the therapy.
+But, any heterogeneity ay unveil more of the underlying
+biology, if the model well-represents the disease it models, and 
+could even conceivably also be an opportunity to target the
+target-expressing population subset.
 
-# A possible strategy - what is to be done
+## A possible strategy - what is to be done with this analysis
 
-These therapies target extracellular components of pro-growth signalling 
-pathways, either the angiogenic VEGF-A or the epidermal HER2. 
+My plan is to look in the proposed cancer cell line scRNAseq data to look
+for expression of VEGF-A and/or HER2. 
+For signs that they are active, I'll look for if there are downstream 
+transcriptional programs that may indicate activation of these receptors.
+Later, I will expand this to also look for expression of proteins that are
+known to interact with HER2 or VEGF-A.
 
-Thus, it may be a good idea to just find cancers where tumor cells are
-typically expressing these genes. 
+Another useful analysis would be to see if there's datasets where cell lines 
+are treated with trastuzumab or bevacizumab (or similar antibodies), and if
+these are indeed affecting any pathway activation or any 
+innate-cellular-immunity or apoptotic markers (regarding the 
+antibody-dependent cellular cytotoxicity hypothesis). 
+Other data modalities could be useful, like proteomics or bulk RNAseq.
 
-scRNAseq would indicate which cell lines have the potential to express the gene 
-from it's mRNA, and so may be a good start.
-
-
-Dean Lee provides links to 
-[an article about Aviv Regev's presentation at AACR 2024](https://www.genengnews.com/topics/cancer/aacr-2024-aviv-regev-shows-how-single-cell-atlases-foster-new-axis-to-genentechs-drug-discovery/)
-and
-[a recording of a talk by Regev about cell atlases as roadmaps for cancer treatments](https://www.youtube.com/watch?v=Wk5QHySlMXU).
-To summarize, Regev (amongst many many others) has been pushing Cell Atlas 
-projects for at least a decade. 
-Now we can enjoy the _fruits_ of this labor. 
-
-
-
-
-# Unanswered questions for me 
+# Unanswered questions - Darach's to-do/to-ask list
 
 - Is HER2 or VEGF-A expression post-transcriptionally regulated?
+    How do people think about that in using RNAseq for screening, in humans?
+- I saw that HER2 signals significantly into the PI3K-AKT pathway. It might be 
+    good to collect some KEGG-style pathway annotations, to look for 
+    pathway
+- For HER2, what happens when you treat in a non-amplified tumor, ie with
+    "normal" expression levels? What about just low expression? 
+    Has the focus on HER2 overexpressing cancers been a byproduct of simply
+    prioritizing investigation of cases where it's highly expressed?
+    Could high-expressed tumors also have compensatory mutaitons to reduce
+    the protein expression to buffer the expression level lower 
+    (not to baseline, but below where the gene copy number would predict)?
+- Look up more about how "antibody-dependent cellular cytotoxicity" is 
+    triggered, molecular signatures of that, how to assay if that's a thing here
 - HER2 overexpression is sometimes determined via DNA FISH, so is actually a
     measure of genomic copy. How tightly does that determine gene expression?
     Could silencing mechansisms complicate that linkage?
-- What's a good sign for an ADC? Specificity, internalization, ... what else?
-- For HER2, what happens when you treat in a non-amplified tumor? What about
-    just low expression? 
-- PI3K-AKT
-
+- What's a good sign for using one of these as a drug-conjugate? 
+    Specificity, internalization, ... what else?
 - I do not know how accessible various tissues are. 
     For example, I saw it mentioned that these may not cross the blood-brain 
     barrier, so of course that may limit efficacy and wouldn't be apparent in
     cell line studies.
+- I need to watch Regev's talk again!
 
 <style>
 body { max-width: 600px; margin: 1em;}
