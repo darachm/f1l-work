@@ -360,6 +360,97 @@ so that assumes no total-count scaling of the transcriptome.
 "When analyzing cell lines collectively, we selected the 7,000 most highly 
 expressed genes across all cell lines".
 
+### Questions from Dean Lee
+
+    How did the authors handle the potential caveat of co-culturing cell lines 
+    before profiling by scRNA-seq? Why do you think that caveat was or was not 
+    adequately addressed?  
+
+They made a analysis argument and did a control experiment.
+The analysis argument was strangely phrased in the paper,
+but they looked at pairwise correlations between NMF programs and used an
+ANOVA to see if correlation looks similar within the pool compared to between
+pools. This is a good way to detect uncommon and distinct effects, where some
+cell line would have a consistent pattern on multiple lines within one pool
+that you only see in that pool, but if there's a common mechanisms of crosstalk
+then you'd see it in multiple pools so this doesn't rule out the existence of
+common effects.
+They also break apart the analysis by cancer type modeled by the cell line,
+and it looks like there's greater effects for skin cancer, ovarian, types?
+Then the ANOVA test, they just put the proportion of variance, but they don't
+assess the significance of this. 
+I've forgotten any context of how small this proportion of variances listed
+here are, so I don't really know how to interpret that, but it looks to me like
+some selective presentation.
+
+So then they do a control experiment where they picked six cell lines 
+(varied, but no discussion of why these six were picked) and 
+did co-culturing or individual culturing.
+They don't discuss which are pooled, so presumably they are all in one pool,
+which has the flaw that now you can't use the same analysis as before to detect
+pool-specific effects, so that's not the right way to detect this effect 
+in my opinion.
+The different expression is then detected by t-test, and while I'm new to
+single-cell I do believe that you ought to be using some sort of 
+variance-moderating approach like limma-voom or DESeq2 before you go doing 
+these direct comparisons. 
+Anyways, they go for it and then just use those differentially expressed genes
+to look for hypergenometic test enriched GO terms. 
+They find enrichment of processes, and state that it looks like the response
+to co-culturing is strain specific.
+Thus, this means that the analysis they do before on the actual data shouldn't
+really pick up the kinds of effects they see here - the previous analysis would
+require seeing an effect shared by members of a pool, not a heterogenous
+response that is instead shared between similar lines in different pools.
+
+I don't mean to harsh on the authors, but I just don't buy what they're selling
+here.
+I don't think it scuttles the paper, but it would have been better to not
+pool cell lines in co-culture!
+For example, they show how if you sort out the high/low EpiSen program, 
+the culture 
+re-establishes itself to a similar program. I don't think this culturing 
+involves a lot of death and clearance of members of the population, so either 
+the EpiSen program is just reverting to a mean level of
+activation (like with cell cycle) or there could inter-subpopulation 
+communication.
+I don't think it was adequately addressed, and I don't think it was technically 
+necessary, so I think it's a major shortcoming of the paper.
+
+    The authors identified discrete subpopulations of cells within a subset of 
+    individual cell lines (Fig. 2A-B). What might be the reason why some 
+    cell lines have these discrete subpopulations while others do not?
+
+Technical reasons such as depth of sampling could confound this.
+Cells may be switching states, and this may reflect some developmental
+instability - thus perhaps that part of their conclusion may depend on which
+cell lines they focused on?
+They may reflect some differentiated (probably not terminally!) populations.
+
+    What are Recurrent Heterogeneous Programs (RHPs) and how were they defined?
+
+These are patterns of heterogeneity that are shared across multiple cell lines.
+They did their NMF to identify "programs", then excluded "those associated
+with technical confounders" and "those with limited similarity to all other
+programs". They were looking for programs that seem similar across cell lines.
+Then only a few dozen programs remained, and only a few "corresponded to the 
+discrete subpopulations described above".
+
+    How do the identified RHPs relate to in vivo programs of heterogeneity in 
+    tumors, and what evidence supports this relationship? 
+
+They re-analyze some _in vivo_ data and see a lot of similarity between these
+_ex vivo_ cell lines and _in vivo_ tumors.
+A lot of the detected "programs" are similar, but there are still differences.
+
+    Where can you download the scRNA-seq data as shown in Figure 1B?
+
+The authors point to two data repositories. They make the most useful
+data form available via Broad Institute's Single Cell Portal that requires
+a license agreement, but only make the raw sequencing reads available in GEO.
+So it depends on how much analysis you want to do, the easiest is the SCP - 
+perhaps by design?
+
 ## A possible strategy - what is to be done with this analysis
 
 My plan is to look in the proposed cancer cell line scRNAseq data to look
