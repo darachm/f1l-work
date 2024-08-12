@@ -344,7 +344,21 @@ Questions I have:
 - What do the pure cultured controls look like?
 - Does any of these RHPs correlate with proliferation/growth rate?
 
-
+Technical details from the methods:
+scRNAseq libraries were generated using 10x Chromium 3' kit v2
+(or v3.1 for the co-culture experiment). 
+"Cell barcode filtering, alignment of reads and UMI
+counting were performed using Cell Ranger 3.0.1 (10x Genomics)."
+They only considered cells with 2-9k genes detected, 
+"yielding an average of 6,758 genes analyzed per cell line."
+They do some log2 ( 1 + CPM/10 ) for expression, then 
+when "analyzing cell lines individually, we only considered genes expressed 
+at high or intermediate levels (E i,j > 3.5) in at least 2% of cells".
+Huh.
+They later say values were centered by cell line for relative expression,
+so that assumes no total-count scaling of the transcriptome.
+"When analyzing cell lines collectively, we selected the 7,000 most highly 
+expressed genes across all cell lines".
 
 ## A possible strategy - what is to be done with this analysis
 
