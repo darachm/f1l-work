@@ -1,7 +1,9 @@
 ---
 author: Darach Miller
-date: 2024-08-02
+date: 2024-08-08
 ---
+
+# This is "The Memo"
 
 Dean Lee has asked each of us to address this Key Scientific Question (KSQ):
 
@@ -219,6 +221,130 @@ But, any heterogeneity ay unveil more of the underlying
 biology, if the model well-represents the disease it models, and 
 could even conceivably also be an opportunity to target the
 target-expressing population subset.
+
+
+## The Paper
+
+Dean Lee offered us the paper Kinker et al 2020 
+([doi 10.1038/s41588-020-00726-6](doi.org/10.1038/s41588-020-00726-6))
+as a dataset to use. 
+
+The main focus of the work is to evaluate cancer cell lines using scRNAseq
+to get a better look at them as models of tumors. A key aspect of this is if
+the heterogeneity of a tumor in tissue can be reflected in a theoretically
+more homogenous lab culturing environment.
+
+Technical note - they multiplexed 24-27 cell lines (from CCLE) where each pool
+had lines with "comparable proliferation rates", then used 10x Chromium for 
+scRNAseq on eight pools of these cells. Then they used clustered to deconvolve
+it, based on clustering genetic and expression profiles. Both of these were 
+based on comparison to bulk RNAseq, and the two approaches "were consistent
+for 98% of cells". They excluded inconsistent assigned cells, and lines with
+fewer than 50 cells, "low-quality data" cells, and suspected doublets.
+They got 53,513 cells from 198 cell lines. Average of 19,264 UMIs and 3,802
+genes per cell.
+
+They do point out that they co-cultured for 3 days before collection, so
+that could affect expression, but they point to a control of six pure cell
+lines as co-culturing having a "modest effect". 
+I think they should have just mixed the cells immediately before prepping 
+libraries. If it's possible to methanol/ethanol-fix cells right before prep
+then I'd prefer if they did that to minimize co-culturing bias! I don't see
+why they would have to grow them multiplexed, except to save on 
+flasks/media/effort.
+
+They used tSNE then DBSCAN to cluster cells. So I've heard that kind of 
+approach has a lot of caveats, and I need to read up on that more later.
+They then did "non-negative matrix factorization" to "identify both
+continuous and discrete variability". I don't know how that works, but they
+"detected 1,445 robust expression programs across all cell lines",
+with 4-9 in individual cell lines. They then filter these and say that
+there's about 800 programs that are not similar to other programs or technical
+cofounders, and only 4.75% correspond to discrete subpopulations 
+(DBSCAN clusters I presume).
+
+They define term RHP for recurrent heterogeneous programs, recurrent across 
+multiple cell lines. Most prominent two programs were associated with cell 
+cycle (by inspection) for G1/S and G2/M phases, but G1/S was more "context 
+dependent". They also point towards some signs of ex-vivo culture adaptations
+in rapid growth and loss of G1 checkpoint.
+Other RHPs are identified, they picked ten there that were detected across
+at least eight cell lines from at least four different pools. 
+Seven of these ten were "highly similar to the _in vivo_ RHPs" (they reanalyzed
+some _in vivo_ datasets), shown by overlap of signature genes, and 
+"high correlation of cell scores". 
+They look at some of them for function, some are DNA damage, interferon, two
+(protein folding/maturation and proteosomal) are not mapping to _in vivo_ 
+heterogeneity.
+
+There's similarity in three "distinct" RHPs to the epithelial-mesenchymal
+transition (EMT). They also dig into "RHPs 6 and 7".
+They annotate RHP 6 as being "a 'classical' p53-dependent senescence program"
+and "RHP 7" as some other senescence similar to keratinocytes, lung bronchial
+cells, and other epithelial cells - so they name it the "EpiSen" program.
+They explore a bit of that by using some cell lines that are high/low in
+that program. 
+
+They then looked for factors associated with heterogeneity. 
+They did copy-number analysis to identify subclones,
+and then found 39% of expression-based clusters were associated with 
+heterogeneity. 
+
+They turned to some perturbations, which was nice, so transformed 
+TGF-$\beta1$ and TGF-$\beta3$ and saw changes in some of the RHP programs
+"EMT-II" and EpiSen. Cool. 
+
+Then they screened drugs for their ability to affect EpiSen-high and EpiSen-low
+subpopulations, sorted out from two selected model cell lines. They screened
+2,198 compounds for affecting cell viability, then repeated that on 248 hits,
+and found 113 with differential killing of the subpopulations of at least one
+of the two cell lines.
+>40% of hits were shared by both cell lines, and that was 71.4% when 
+"considering the targets of the compounds rather than the exact compounds".
+They validated dose-response for fourteen compounds.
+
+Relevant to our original question for this project, they found that EpiSen-high
+cells were sensitive to the "senolytic" (new word for me, senescence lytic)
+ABT-737 (that's the Bcl-2 inhibitor). They also found them sensitive to
+"multiple inhibitors of epidermal growth factor receptor (EGFR), AKT, 
+phosphatidylinositol-3-OH kinase (PI(3)K), DNA-dependent protein kinase (DNA-PK),
+insulin-like growth factor 1 receptor (IGF1R) and Janus kinase
+(JAK)". "Accordingly, EpiSen-high cells (which are defined by
+low AXL expression) were more sensitive to inhibitors of PI(3)K
+and AKT, as well as those of EGFR and IGF1R that signal via the
+PI(3)K–AKT axis."
+So linking back to [trastuzumab](#trastuzumab-and-her2), that one's supposed to
+inhibit the PI3K-AKT pathway (to which HER2 is thought to signal) and HER2
+is also thought to be activated by complexing with other receptors including
+that IGFR1 [^iqbal2014]. Also EGFR.
+Thus, EpiSen-high cells might respond well to trastuzumab because that's another
+way of hitting those pathways.
+
+Then they looked at patients, and EpiSen is predictive of survival I believe.
+
+In conclusion,
+the found some recurrent heterogenous programs (RHPs).
+Genetic subclones identified by inferred copy number changes don't explain
+much of those, so non-genetic variability is at play here too 
+(ie epigenetics).
+Critically, they're looking at these "programs" not as being clean and 
+distinct developmental programs but as being partial and limited trends.
+They "hypothesize that cancer cells often activate partial or distorted 
+programs, possibly not through canonical developmental mechanisms, in a
+context-dependent manner", but I would say that it's rather that 
+developmental programs are clean, distinct, and canonical by human 
+interpretation and it's likely that even development has this quantitative
+squishiness that is on display here. It's true here, and probably true in 
+"normal" development as well.
+
+
+Questions I have:
+- What is doublet rate?
+- What is cell count?
+- What do the pure cultured controls look like?
+- Does any of these RHPs correlate with proliferation/growth rate?
+
+
 
 ## A possible strategy - what is to be done with this analysis
 
