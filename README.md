@@ -8,7 +8,8 @@ Week1 memo in progress...
 # Structure
 
 - `src` : for my code, source scripts
-- `lib` : resources, data, upstream stuff, other people's code I'm importing
+- `lib` : upstream stuff, other people's code I'm importing
+- `data` : data
 - `out` : outputs generated, deletable and should be regenerated
 - `tmp` : temporary scratch directory
 
