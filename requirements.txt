@@ -1,0 +1,7 @@
+marimo
+anndata
+numpy
+pandas
+scanpy
+scipy
+seaborn
