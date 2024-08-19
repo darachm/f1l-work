@@ -14,12 +14,30 @@ def __():
 def __(mo):
     mo.md(
         r"""
-        To reproduce this:
+        I've adapted the jupyter notebook to a marimo notebook. That 
+        format/runtime/environment has several advantages (and limitations!) and 
+        I'm using this project as an opportunity to learn about using it.
 
-        1. setup a virtual environment in a convienent directory
+        ## What else I modified
+
+        Since I'm a bit limited on memory (16GB RAM on my cruncher computer), I tweaked
+        the workflow to read in the TSV as chunks, converted each chunk to a sparse
+        matrix in `scipy` to save on space, and then serially concatenated each chunk
+        to slowly build the full matrix object (as well as the list of gene IDs).
+
+        I've left the filters applied at this stage as the same, as I don't have an
+        intuition for where to place those. Perhaps I ought to plot and take a look
+        at how these are distributed, but I'll do that later if I do.
+
+        ## How to run this
+
+        1. setup a virtual environment in a conveinent directory
         1. install `requirements.txt` (the packages used, plus `marimo`)
-        1. launch out `marimo edit` from the repo's base directory
-        1. edit the below variables if you put data and metadata in a different place
+        1. launch out `marimo edit` from the repo's base directory, likely with
+            appropriate arguments for port and password
+        1. select the notebook to open it, edit the directory variables below,
+            and I believe you can run it all with the button in the lower right
+            corner
         """
     )
     return
@@ -208,7 +226,7 @@ def __(mo):
 
 
 @app.cell
-def __(anndata, gene_counts, gene_ids, meta, np):
+def __(anndata, gene_counts, gene_ids, meta, np, pd):
     ann_datar = anndata.AnnData(
         X=gene_counts,
         obs=meta.astype(
@@ -235,9 +253,8 @@ def __(anndata, gene_counts, gene_ids, meta, np):
                 "G2/M_score": np.float32,
             }
         ),
-        var=gene_ids,
+        var=pd.DataFrame({'gene_names':gene_ids}).set_index('gene_names'),
     )
-    ann_datar.var.drop(columns=[0], inplace=True)
     ann_datar
     return ann_datar,
 
