@@ -1,7 +1,8 @@
 marimo
-anndata
 numpy
 pandas
-scanpy
 scipy
+anndata
+scanpy
 seaborn
+matplotlib
