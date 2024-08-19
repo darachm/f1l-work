@@ -136,9 +136,9 @@ def __(pd, re, scipy):
         with open(filepath, "r") as f:
             # First we read in the first three lines and drop the
             # leading empty space
-            cell_id = re.split("\t", f.readline())[1:]
-            cell_line = re.split("\t", f.readline())[1:]
-            cell_pool = re.split("\t", f.readline())[1:]
+            cell_id = re.split("\t", f.readline().rstrip())[1:]
+            cell_line = re.split("\t", f.readline().rstrip())[1:]
+            cell_pool = re.split("\t", f.readline().rstrip())[1:]
 
             # Then we ask if each cell ID is in the index of the
             # metadata, ie if we should keep it
@@ -188,35 +188,16 @@ def __(data_dir, meta, read_in_umi_counts):
 
 
 @app.cell
-def __(cell_id, gene_counts, gene_ids, mo):
+def __(cell_id, gene_counts, meta, mo):
     mo.md(f"""
         ...and report that we:
 
-        Read in {len(cell_id)} cell ids that look like: [ {", ".join(cell_id[0:3])}, ... ]
+        Read in {len(cell_id)} cell ids that look like: [ {", ".join(cell_id[0:3])}, ... ],
+        and filtered to keep the {len(meta.index)} cells for which we have the metadata.
 
         Read in gene count matrix as sparse matrix of shape {gene_counts.shape},
-        with counts for {len(gene_ids)} different gene IDs.
+        with {gene_counts.shape[0]} counts for {gene_counts.shape[1]} different gene IDs.
         """)
-    return
-
-
-@app.cell
-def __(mo):
-    mo.md(
-        r"""
-        ## Generate the AnnData object
-
-        First, we take that `gene_counts` dict, we tack on the cell IDs list,
-        and we turn that into a pandas DataFrame, set the index, and `reindex`
-        to just use the ones where it matches the metadata.
-        """
-    )
-    return
-
-
-@app.cell
-def __(gene_counts):
-    gene_counts[0:5, :]
     return
 
 
