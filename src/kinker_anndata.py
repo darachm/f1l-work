@@ -268,10 +268,5 @@ def __(ann_datar, scratch_dir):
     return
 
 
-@app.cell
-def __():
-    return
-
-
 if __name__ == "__main__":
     app.run()
