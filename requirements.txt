@@ -1,8 +1,10 @@
 marimo
-numpy
+numpy>=2.0.0
 pandas
 scipy
 anndata
 scanpy
 seaborn
 matplotlib
+igraph
+leidenalg
