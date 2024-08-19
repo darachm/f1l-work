@@ -105,24 +105,20 @@ def __(mo):
 
 @app.cell
 def __(pd, re, scipy):
-    def proc_a_chunk(counts_chunks, keep_index, verbose=True):
+    def proc_a_chunk(chunk, keep_index, verbose=True):
         """
         We take the next chunk, just keep the columns as indexed in keep_index,
         then return the gene IDs and a CSR matrix of it.
 
         Params:
-            counts_chunks: pandas read_csv iterable returned by specifying chunksize
+            chunk: chunk from a pandas read_csv read chunkwise
             keep_index: logical list of which columns (cells) to keep
             verbose: do you want it to report progress to STDOUT?
         """
-        if verbose:
-            print(f"Handing chunk at {counts_chunks._currow}")
         try:
-            chunk = counts_chunks.__next__().loc[:, keep_index]
+            chunk = chunk.loc[:, keep_index]
             return (list(chunk.index), scipy.sparse.csr_matrix(chunk.transpose()))
         except StopIteration:
-            if verbose:
-                print(f"Finished taking {counts_chunks._currow} rows.")
             return (None, None)
 
 
@@ -161,13 +157,14 @@ def __(pd, re, scipy):
             )
 
             # We grab the first chunk
-            (return_gene_ids, return_object) = proc_a_chunk(
-                counts_chunks, keep_index
-            )
+            chunk = counts_chunks.__next__()
+            print(f"Handing chunk at {counts_chunks._currow}")
+            (return_gene_ids, return_object) = proc_a_chunk(chunk, keep_index)
 
             for chunk in counts_chunks:
+                print(f"Handing chunk at {counts_chunks._currow}")
                 (more_return_gene_ids, more_return_object) = proc_a_chunk(
-                    counts_chunks, keep_index
+                    chunk, keep_index
                 )
 
                 if more_return_gene_ids is not None:
@@ -175,6 +172,8 @@ def __(pd, re, scipy):
                     return_object = scipy.sparse.hstack(
                         [return_object, more_return_object]
                     )
+
+            print(f"Finished taking {counts_chunks._currow} rows.")
 
         return (cell_id, return_gene_ids, return_object)
     return proc_a_chunk, read_in_umi_counts
