@@ -220,16 +220,31 @@ def __(cell_id, gene_counts, meta, mo):
 
 
 @app.cell
+def __(cell_id, meta, pd):
+    cell_id_index = pd.DataFrame({'CellID':[x for x in cell_id if x in meta.index]}).set_index('CellID').index
+    meta_re = meta.reindex(index=cell_id_index)
+    meta_re
+    return cell_id_index, meta_re
+
+
+@app.cell
+def __(cell_id_index, meta_re):
+    meta_re.index.equals(cell_id_index)
+    # obviously
+    return
+
+
+@app.cell
 def __(mo):
     mo.md(r"""Then we can convert it to the AnnData type""")
     return
 
 
 @app.cell
-def __(anndata, gene_counts, gene_ids, meta, np, pd):
+def __(anndata, gene_counts, gene_ids, meta_re, np, pd):
     ann_datar = anndata.AnnData(
         X=gene_counts,
-        obs=meta.astype(
+        obs=meta_re.astype(
             {
                 "CellLine": np.str_,
                 "Pool": np.str_,
